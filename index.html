@@ -33,7 +33,6 @@
     h1 { font-size: 28px; color: var(--text-dark); margin-bottom: 4px; }
     .subtitle { color: var(--text-secondary); font-size: 15px; }
 
-    /* Блок "Об отрасли" — бежевый фон */
     .industry-info {
       background: var(--bg-card);
       border-radius: var(--radius);
@@ -81,7 +80,6 @@
       box-shadow: var(--shadow-hover);
       cursor: pointer;
     }
-    /* Выбранный бандл: подсветка бордером, но фон остаётся белым */
     .bundle-card.selected { 
       border: 2px solid var(--accent);
       box-shadow: var(--shadow);
@@ -208,10 +206,10 @@
   <button class="feedback-btn" id="feedback-btn" title="Оставить отзыв">💬</button>
 
   <script>
-    // 🔗 Ссылки на Google Sheets (формат TSV)
+    // 🔗 ОБНОВЛЁННЫЕ ССЫЛКИ НА ТАБЛИЦЫ
     const CONFIG = {
-      BUNDLES_SHEET: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6efI49YZlwvdIPdFpkwTVisWD9P63E3UJ9XkeWnmxtfXwJPBhjNGWerDmmixbV5aMadBQTjkw1UMq/pub?gid=0&single=true&output=tsv',
-      PRODUCTS_SHEET: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT3BvjUqCxgtunnRNbJlX0D9T7nGowBNWf9C5ybNes6MFdYYvTs6M4i7HT0nlXDFsa3PvNN5qJcOvuz/pub?gid=0&single=true&output=tsv',
+      BUNDLES_SHEET: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6efI49YZlwvdIPdFpkwTVisWD9P63E3UJ9XkeWnmxtfXwJPBhjNGWerDmmixbV5aMadBQTjkw1UMq/pub?output=tsv',
+      PRODUCTS_SHEET: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT3BvjUqCxgtunnRNbJlX0D9T7nGowBNWf9C5ybNes6MFdYYvTs6M4i7HT0nlXDFsa3PvNN5qJcOvuz/pub?output=tsv',
       INDUSTRY_DESCS: {
         "Независимый Еком": "Онлайн-продажи через собственный сайт или приложение. Клиент не зависит от маркетплейсов.",
         "Зависимый Еком": "Продажи через маркетплейсы (Ozon, Wildberries, Яндекс.Маркет) как основной канал.",
@@ -324,14 +322,12 @@
       });
     }
 
-    // 🎯 НОВАЯ ЛОГИКА: "Расчетный счет" всегда первый
     function generateCombinedText(bundleIds) {
       if (bundleIds.length === 0) return '';
       const bundles = bundleIds.map(id => allBundles.find(b => b.id === id)).filter(Boolean);
       if (bundles.length === 0) return '';
       if (bundles.length === 1) return bundles[0].script;
       
-      // Группируем по продукту
       const byProduct = {};
       bundles.forEach(b => {
         if (!byProduct[b.product]) byProduct[b.product] = [];
@@ -340,7 +336,6 @@
       
       const entries = Object.entries(byProduct);
       
-      // Если выбран ОДИН продукт с несколькими офферами
       if (entries.length === 1) {
         const [product, list] = entries[0];
         const base = list[0].script.split(' и получи ')[0];
@@ -358,14 +353,11 @@
         return list[0].script;
       }
       
-      // Если выбраны РАЗНЫЕ продукты
-      // Находим "Расчетный счет" и выносим его первым
       const rkoBundles = entries.find(([p]) => p === "Расчетный счет")?.[1] || [];
       const otherEntries = entries.filter(([p]) => p !== "Расчетный счет");
       
       const parts = [];
       
-      // Сначала обрабатываем "Расчетный счет" (если есть)
       if (rkoBundles.length > 0) {
         const base = rkoBundles[0].script.split(' и получи ')[0];
         const benefits = rkoBundles.map(b => {
@@ -378,7 +370,6 @@
         parts.push({ type: 'rko', base, benefit: benefitText });
       }
       
-      // Затем остальные продукты
       otherEntries.forEach(([product, list]) => {
         const base = list[0].script.split(' и получи ')[0];
         const action = base.includes('Открой') ? 'Открой' : 'Подключи';
@@ -392,7 +383,6 @@
         parts.push({ type: 'other', product, action, benefit: benefitText });
       });
       
-      // Формируем итоговую строку
       if (parts.length === 2 && parts[0].type === 'rko' && parts[1].type === 'other') {
         return `Открой Расчетный счет и подключи ${parts[1].product} и получи ${parts[0].benefit} и ${parts[1].benefit}`.replace(/  +/g, ' ').trim();
       } else if (parts.length > 2) {
@@ -405,7 +395,6 @@
         }
       }
       
-      // Fallback: просто соединяем скрипты
       return bundles.map(b => b.script).join(' и ');
     }
 
