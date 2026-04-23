@@ -35,14 +35,14 @@
                     const values = rows[i].split(',');
                     if (values.length >= headers.length) {
                         const bundle = {
-                            id: parseInt(values[0]),
+                            ID: parseInt(values[0]),
                             industry: values[1] ? values[1].split(';') : [],
                             product: values[2],
-                            vendor: values[3],
-                            fullScript: values[4],
+                            offer: values[3],
+                            short_desc: values[4],
                             benefit: values[5],
-                            details: values[6],
-                            link: values[7]
+                            desc: values[6],
+                            url_offer: values[7]
                         };
                         BUNDLES_DATA.push(bundle);
                     }
