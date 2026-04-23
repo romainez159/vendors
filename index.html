@@ -6,12 +6,22 @@
   <title>Матрица бандлов | Подбор офферов</title>
   <style>
     :root {
-      --bg-page: #f1eee8; --bg-card: #e4d7c1; --bg-result: #f1eee8;
-      --text-primary: #333333; --text-secondary: #8d6040; --text-dark: #212121;
-      --accent: #ffdd2d; --accent-hover: #ffe560;
-      --border: #ddc7a4; --border-active: #b58b60;
-      --success-bg: #bedd9a; --success-text: #73b077;
-      --radius: 12px; --shadow: 0 4px 12px rgba(33, 33, 33, 0.08);
+      --bg-page: #f1eee8;
+      --bg-card: #e4d7c1;
+      --bg-white: #ffffff;
+      --bg-result: #f1eee8;
+      --text-primary: #333333;
+      --text-secondary: #8d6040;
+      --text-dark: #212121;
+      --accent: #ffdd2d;
+      --accent-hover: #ffe560;
+      --border: #ddc7a4;
+      --border-active: #b58b60;
+      --success-bg: #bedd9a;
+      --success-text: #73b077;
+      --radius: 12px;
+      --shadow: 0 4px 12px rgba(33, 33, 33, 0.08);
+      --shadow-hover: 0 8px 24px rgba(33, 33, 33, 0.12);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -24,7 +34,7 @@
     .subtitle { color: var(--text-secondary); font-size: 15px; }
 
     .industry-info {
-      background: var(--bg-card); border: 1px solid var(--border);
+      background: var(--bg-white); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 16px; margin-bottom: 24px; display: none;
     }
     .industry-info.active { display: block; }
@@ -32,7 +42,7 @@
     .industry-info p { font-size: 14px; color: var(--text-secondary); line-height: 1.4; }
 
     .selectors { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-    .panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+    .panel { background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
     .panel h3 { font-size: 16px; margin-bottom: 12px; color: var(--text-dark); }
     
     select {
@@ -53,11 +63,18 @@
 
     .bundles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .bundle-card {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 16px; transition: all 0.2s; position: relative;
+      background: var(--bg-white); border-radius: var(--radius);
+      padding: 16px; transition: all 0.2s ease; cursor: pointer; position: relative;
     }
-    .bundle-card:hover { border-color: var(--border-active); box-shadow: var(--shadow); transform: translateY(-2px); }
-    .bundle-card.selected { border: 2px solid var(--accent); background: #fff; }
+    .bundle-card:hover { 
+      transform: scale(1.02); 
+      box-shadow: var(--shadow-hover);
+      cursor: pointer;
+    }
+    .bundle-card.selected { 
+      background: var(--bg-card); 
+      box-shadow: var(--shadow);
+    }
     
     .bundle-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
     .bundle-title { font-weight: 600; font-size: 16px; color: var(--text-dark); }
@@ -66,15 +83,11 @@
     
     .card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn { padding: 8px 14px; border: none; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
-    .btn-primary { background: var(--accent); color: var(--text-dark); }
-    .btn-primary:hover { background: var(--accent-hover); }
-    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
-    .btn-secondary:hover { border-color: var(--border-active); color: var(--text-primary); }
     .btn-link { background: none; border: none; color: var(--border-active); padding: 8px 0; font-size: 13px; cursor: pointer; text-decoration: none; }
     .btn-link:hover { text-decoration: underline; }
 
     .result-area {
-      background: var(--bg-result); border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius);
       padding: 20px; position: sticky; top: 20px;
     }
     .result-title { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -92,7 +105,7 @@
     }
     .modal-overlay.active { display: flex; }
     .modal {
-      background: linear-gradient(135deg, #e4d7c1 0%, #f1eee8 100%); border: 1px solid var(--border);
+      background: var(--bg-white); border: 1px solid var(--border);
       border-radius: 16px; padding: 24px; max-width: 500px; width: 90%; box-shadow: 0 8px 32px rgba(33,33,33,0.2);
     }
     .modal h3 { font-size: 20px; margin-bottom: 16px; color: var(--text-dark); }
@@ -183,214 +196,157 @@
   <button class="feedback-btn" id="feedback-btn" title="Оставить отзыв">💬</button>
 
   <script>
-    const CONFIG = {
-      USE_GOOGLE_SHEET: true,
-      BUNDLES_SHEET: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6efI49YZlwvdIPdFpkwTVisWD9P63E3UJ9XkeWnmxtfXwJPBhjNGWerDmmixbV5aMadBQTjkw1UMq/pub?gid=0&single=true&output=tsv',
-      PRODUCTS_SHEET: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT3BvjUqCxgtunnRNbJlX0D9T7nGowBNWf9C5ybNes6MFdYYvTs6M4i7HT0nlXDFsa3PvNN5qJcOvuz/pub?gid=0&single=true&output=tsv',
-      FEEDBACK_URL: 'https://forms.gle/YOUR_FORM_ID',
-      INDUSTRY_DESCS: {
-        "Независимый Еком": "Онлайн-продажи через собственный сайт или приложение. Клиент не зависит от маркетплейсов, имеет свою платформу для приёма заказов.",
-        "Зависимый Еком": "Продажи через маркетплейсы (Ozon, Wildberries, Яндекс.Маркет) как основной канал. Клиент — селлер или производитель с дистрибуцией через площадки.",
-        "Розница": "Офлайн-точки продаж: магазины, салоны, кафе, сервисные центры. Клиент работает с конечным потребителем в физическом пространстве.",
-        "IT": "Разработка ПО, веб-студии, аутсорсинг, IT-консалтинг. Клиент предоставляет цифровые услуги или продукты.",
-        "Стройка": "Строительство, ремонт, производство стройматериалов. Клиент работает в сфере возведения объектов или отделки."
+    // ВСТРОЕННЫЕ ДАННЫЕ ИЗ ТАБЛИЦ
+    const BUNDLES_DATA = [
+      {
+        id: "b1",
+        industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка", "IT"],
+        product: "Расчетный счет",
+        vendor: "Яндекс Директ",
+        script: "Открой Расчетный счет и получи 10.000 руб на запуск рекламы в Яндекс Директе",
+        details: "Яндекс Директ — сервис привлечения клиентов в Поиске, Картах и Рекламной сети Яндекса. Получить промокод могут только новые клиенты Яндекс Директа, у которых не было учетной записи в сервисе. Для одного ИНН доступен только один промокод. Он действует 30 календарных дней с момента получения, заменить или продлить его срок нельзя. Полные условия акции: https://yandex.ru/adv/actions/",
+        link: "https://www.tbank.ru/business/partners/online/yadirect/"
       },
+      {
+        id: "b2",
+        industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка", "IT"],
+        product: "Расчетный счет",
+        vendor: "HeadHunter",
+        script: "Открой Расчетный счет и получи 30 дней бесплатного размещения вакансии на HeadHunter с тарифом \"Стандарт.Плюс\"",
+        details: "HeadHunter — крупнейшая в России площадка для поиска сотрудников. Предложение действует для новых клиентов, которые ранее не пользовались услугами компании. Принять участие в акции могут только прямые работодатели — не кадровые и не рекрутинговые агентства. Полные условия акции: https://kaluga.hh.ru/article/30679",
+        link: "https://www.tbank.ru/business/partners/hr/hh/"
+      },
+      {
+        id: "b3",
+        industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка", "IT"],
+        product: "Зарплатный проект",
+        vendor: "HeadHunter",
+        script: "Подключи Зарплатный проект и получи 30 дней бесплатного размещения вакансии на HeadHunter с тарифом \"Стандарт.Плюс\"",
+        details: "HeadHunter — крупнейшая в России площадка для поиска сотрудников. Предложение действует для новых клиентов, которые ранее не пользовались услугами компании. Принять участие в акции могут только прямые работодатели — не кадровые и не рекрутинговые агентства. Полные условия акции: https://kaluga.hh.ru/article/30679",
+        link: "https://www.tbank.ru/business/partners/hr/hh/"
+      },
+      {
+        id: "b4",
+        industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка", "IT"],
+        product: "Расчетный счет",
+        vendor: "Яндекс Бизнес",
+        script: "Открой Расчетный счет и получи 10 000 ₽ на первый запуск Рекламной подписки в Яндекс Бизнесе",
+        details: "Рекламная подписка от Яндекс Бизнеса автоматически создает и настраивает объявления. А также запускает рекламу сразу на нескольких площадках: в поиске Яндекса, Картах и на сайтах партнеров Рекламной сети Яндекса. Если сайта еще нет, его можно создать в Яндекс Бизнесе или в Конструкторе сайтов ТБанка. Сервис автоматически собирает страницу из информации в профиле пользователя.",
+        link: "https://www.tbank.ru/business/partners/marketing/yaonline/"
+      },
+      {
+        id: "b5",
+        industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка", "IT"],
+        product: "Расчетный счет",
+        vendor: "Контур.Диадок",
+        script: "Открой Расчетный счет и получи скидку 15% на первую оплату тарифа в Контур Диадок",
+        details: "Контур. Диадок — система обмена электронными документами с контрагентами. Предложение действует только для новых клиентов, кто ранее не пользовался Контур. Диадоком. Скидка 15% предоставляется на пакеты исходящих документов по промокоду. Акционные тарифные планы: «250 документов», «600 документов», «1200 документов» и «3000 документов».",
+        link: "https://www.tbank.ru/business/partners/management/konturdiadok/"
+      },
+      {
+        id: "b6",
+        industry: ["Независимый Еком"],
+        product: "Интернет-эквайринг",
+        vendor: "CloudKassir",
+        script: "Открой Интернет-эквайринг и получи скидку 12 000 ₽ на первый год обслуживания кассы CloudKassir",
+        details: "Готовое решение для интернет-магазинов: возьмите онлайн-кассу в аренду и сразу работайте по 54-ФЗ. Бесплатная регистрация в налоговой, скидка 12 000 ₽ на первый год обслуживания кассы.",
+        link: "https://www.tbank.ru/business/partners/online/cloudkassir/"
+      },
+      {
+        id: "b7",
+        industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка"],
+        product: "Расчетный счет",
+        vendor: "Авито (Товары)",
+        script: "Открой Расчетный счет и получи 7.000 бонусов на оплату услуг по продвижению на Авито в категории «Товары»",
+        details: "Авито — российская онлайн-доска объявлений. Авито дарит 7000 бонусов новым клиентам на оплату услуг по продвижению в категории «Товары». Авито предлагает три тарифа на выбор: «Базовый», «Расширенный» и «Максимальный». С ними бизнес получает доступ к профессиональному личному кабинету и дополнительные преимущества, например, автоматическую публикацию объявлений и аналитику спроса. Срок действия предложения — до 31 декабря 2026 года. Предложение доступно клиентам, которые подключили тариф «Расширенный» или «Максимальный» в категории «Товары» в течение 30 дней после заполнения заявки. Для получения бонуса клиенту нужно авторизоваться в личном кабинете Авито с указанием ИНН. Полные условия акции: https://www.avito.ru/legal/promo/bonuses-tariff-connection",
+        link: "https://www.tbank.ru/business/partners/marketplaces/avito/"
+      },
+      {
+        id: "b8",
+        industry: ["Зависимый Еком"],
+        product: "Селлер",
+        vendor: "WBarcode",
+        script: "Подключи Селлер и получи скидку 50% на подписку на сервис для генерации этикеток",
+        details: "Сервис WBarcode помогает продавцам на маркетплейсах быстро создавать наклейки со штрихкодами. В WBarcode продавец один раз заполняет поля в форме: штрихкод, артикул, цвет, размер и необходимое количество наклеек. Затем сразу отправляет их на печать. В аналогичных сервисах нужно заполнять шаблоны в Word и Excel и добавлять текст для каждой наклейки. Форматы штрихкодов, которые делает WBarcode, принимают Ozon и Wildberries, поэтому продавцу не нужно переживать, что из-за нечитаемых наклеек придется снимать товар с маркетплейса и переделывать их. Продавец может указать специальный API-ключ, и информация о товарах автоматически подгрузится в личный кабинет сервиса WBarcode из кабинетов маркетплейсов.",
+        link: "https://www.tbank.ru/business/partners/marketplaces/wbarcode/"
+      },
+      {
+        id: "b9",
+        industry: ["Розница"],
+        product: "Расчетный счет",
+        vendor: "Авито (Услуги)",
+        script: "Открой Расчетный счет и получи 100% кэшбэк бонусами на оплату услуг по продвижению на Авито в категории «Услуги»",
+        details: "Авито — онлайн-сервис для размещения объявлений. Авито дарит 100% кэшбэк бонусами новым клиентам на оплату услуг по продвижению в категории «Услуги». Получить бонус может пользователь, который отвечает одному из критериев: 1. до 1 июля 2024 года не был зарегистрирован на Авито; 2. не размещал на Авито за плату объявления, не покупал тариф и услуги продвижения в Услугах в течение последних 180 календарных дней до даты подачи заявки на участие в акции. Бесплатные размещения, доступные в рамках лимитов, не учитываются. Срок подачи заявок на участие в акции — до 31 декабря 2026 года. Бонусы начисляются на кошелек на Авито в течение 7 рабочих дней с момента выполнения всех условий акции. Бонусы действуют в течение двух недель с момента начисления. 1 бонус равен 1 ₽. Бонусы не могут быть заменены на деньги. Принять участие в акции можно один раз. Бонусы можно использовать для оплаты не более 99% стоимости услуг продвижения объявлений на Авито. Бонусы не могут быть использованы для оплаты услуг продвижения за комиссию в категориях «Недвижимость» и «Товары». Полные условия акции: https://www.avito.ru/legal/promo/services-cashback-100",
+        link: "https://www.tbank.ru/business/partners/marketplaces/avitouslugi/"
+      }
+    ];
 
-      // ─────────────────────────────────────────────────────────────────
-      // FALLBACK-данные: точно соответствуют таблицам Google Sheets.
-      // Названия продуктов (поле `product`) = столбец «Продукт банка»
-      // из таблицы бандлов, они же должны совпадать с полем `name`
-      // в таблице продуктов.
-      // ─────────────────────────────────────────────────────────────────
-      FALLBACK_BUNDLES: [
-        {
-          id: "b1",
-          industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка", "IT"],
-          product: "Расчетный счет",          // было "РКО"
-          vendor: "Яндекс Директ",
-          script: "Открой РКО и получи 10.000 руб на запуск рекламы в Яндекс Директе",
-          details: "Яндекс Директ — сервис привлечения клиентов в Поиске, Картах и Рекламной сети Яндекса. Получить промокод могут только новые клиенты Яндекс Директа, у которых не было учетной записи в сервисе. Для одного ИНН доступен только один промокод. Он действует 30 календарных дней с момента получения, заменить или продлить его срок нельзя.",
-          link: "https://www.tbank.ru/business/partners/online/yadirect/"
-        },
-        {
-          id: "b2",
-          industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка", "IT"],
-          product: "Расчетный счет",          // было "РКО"
-          vendor: "HeadHunter",
-          script: "Открой РКО и получи 30 дней бесплатного размещения вакансии на HeadHunter с тарифом \"Стандарт.Плюс\"",
-          details: "HeadHunter — крупнейшая в России площадка для поиска сотрудников. Предложение действует для новых клиентов, которые ранее не пользовались услугами компании. Принять участие в акции могут только прямые работодатели — не кадровые и не рекрутинговые агентства.",
-          link: "https://www.tbank.ru/business/partners/hr/hh/"
-        },
-        {
-          id: "b3",
-          industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка", "IT"],
-          product: "Зарплатный проект",       // было "Зарплатный проект + РКО"
-          vendor: "HeadHunter",
-          script: "Подключи Зарплатный проект (+РКО) и получи 30 дней бесплатного размещения вакансии на HeadHunter с тарифом \"Стандарт.Плюс\"",
-          details: "HeadHunter — крупнейшая в России площадка для поиска сотрудников. Предложение действует для новых клиентов, которые ранее не пользовались услугами компании. Принять участие в акции могут только прямые работодатели.",
-          link: "https://www.tbank.ru/business/partners/hr/hh/"
-        },
-        {
-          id: "b4",
-          industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка", "IT"],
-          product: "Расчетный счет",          // было "РКО"
-          vendor: "Яндекс Бизнес",
-          script: "Открой РКО и получи 10 000 ₽ на первый запуск Рекламной подписки в Яндекс Бизнесе",
-          details: "Рекламная подписка от Яндекс Бизнеса автоматически создает и настраивает объявления. А также запускает рекламу сразу на нескольких площадках: в поиске Яндекса, Картах и на сайтах партнеров Рекламной сети Яндекса.",
-          link: "https://www.tbank.ru/business/partners/marketing/yaonline/"
-        },
-        {
-          id: "b5",
-          industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка", "IT"],
-          product: "Расчетный счет",          // было "РКО"
-          vendor: "Контур.Диадок",
-          script: "Открой РКО и получи скидку 15% на первую оплату тарифа в Контур Диадок",
-          details: "Контур. Диадок — система обмена электронными документами с контрагентами. Предложение действует только для новых клиентов, кто ранее не пользовался Контур. Диадоком. Скидка 15% предоставляется на пакеты исходящих документов по промокоду.",
-          link: "https://www.tbank.ru/business/partners/management/konturdiadok/"
-        },
-        {
-          id: "b6",
-          industry: ["Независимый Еком"],
-          product: "Интернет-эквайринг",      // было "Интернет-эквайринг + РКО"
-          vendor: "CloudKassir",
-          script: "Открой Интернет-эквайринг (+РКО) и получи скидку 12 000 ₽ на первый год обслуживания кассы CloudKassir",
-          details: "Готовое решение для интернет-магазинов: возьмите онлайн-кассу в аренду и сразу работайте по 54-ФЗ. Бесплатная регистрация в налоговой, скидка 12 000 ₽ на первый год обслуживания кассы.",
-          link: "https://www.tbank.ru/business/partners/online/cloudkassir/"
-        },
-        {
-          id: "b7",
-          industry: ["Независимый Еком", "Зависимый Еком", "Розница", "Стройка"],
-          product: "Расчетный счет",          // было "РКО"
-          vendor: "Авито (Товары)",
-          script: "Открой РКО и получи 7.000 бонусов на оплату услуг по продвижению на Авито в категории «Товары»",
-          details: "Авито дарит 7000 бонусов новым клиентам на оплату услуг по продвижению в категории «Товары». Предложение доступно клиентам, которые подключили тариф «Расширенный» или «Максимальный» в течение 30 дней после заполнения заявки.",
-          link: "https://www.tbank.ru/business/partners/marketplaces/avito/"
-        },
-        {
-          id: "b8",
-          industry: ["Зависимый Еком"],
-          product: "Селлер",                  // было "Селлер + РКО"
-          vendor: "WBarcode",
-          script: "Подключи Селлер (+РКО) и получи скидку 50% на подписку на сервис для генерации этикеток",
-          details: "Сервис WBarcode помогает продавцам на маркетплейсах быстро создавать наклейки со штрихкодами. Форматы штрихкодов принимают Ozon и Wildberries.",
-          link: "https://www.tbank.ru/business/partners/marketplaces/wbarcode/"
-        },
-        {
-          id: "b9",
-          industry: ["Розница"],
-          product: "Расчетный счет",          // было "РКО"
-          vendor: "Авито (Услуги)",
-          script: "Открой РКО и получи 100% кэшбэк бонусами на оплату услуг по продвижению на Авито в категории «Услуги»",
-          details: "Авито дарит 100% кэшбэк бонусами новым клиентам на оплату услуг по продвижению в категории «Услуги». Бонусы начисляются в течение 7 рабочих дней и действуют две недели. 1 бонус = 1 ₽.",
-          link: "https://www.tbank.ru/business/partners/marketplaces/avitouslugi/"
-        }
-      ],
+    const PRODUCTS_DATA = [
+      { industry: ["Независимый Еком"], name: "Регистрация бизнеса", desc: "Регистрация бизнеса онлайн — 0 ₽", link: "https://www.tbank.ru/business/registration/" },
+      { industry: ["Независимый Еком"], name: "Расчетный счет", desc: "Бесплатное обслуживание до 2 месяцев", link: "https://www.tbank.ru/business/account/" },
+      { industry: ["Независимый Еком"], name: "Интернет-эквайринг", desc: "Приём оплаты на сайте", link: "https://www.tbank.ru/business/online-acquiring/" },
+      { industry: ["Независимый Еком"], name: "Долями", desc: "Описание", link: "" },
+      { industry: ["Независимый Еком"], name: "Кредиты для бизнеса", desc: "Описание", link: "" },
+      { industry: ["Независимый Еком"], name: "Бухгалтерия", desc: "Описание", link: "" },
+      { industry: ["Независимый Еком"], name: "Овернайт", desc: "Описание", link: "" },
+      { industry: ["Независимый Еком"], name: "Зарплатный проект", desc: "Описание", link: "" },
+      { industry: ["Независимый Еком"], name: "Валютный счет", desc: "Описание", link: "" },
+      { industry: ["Независимый Еком"], name: "Т-Чеки", desc: "Описание", link: "" },
+      { industry: ["Зависимый Еком"], name: "Регистрация бизнеса", desc: "Регистрация бизнеса онлайн — 0 ₽", link: "https://www.tbank.ru/business/registration/" },
+      { industry: ["Зависимый Еком"], name: "Расчетный счет", desc: "Бесплатное обслуживание до 2 месяцев", link: "https://www.tbank.ru/business/account/" },
+      { industry: ["Зависимый Еком"], name: "Кредиты для бизнеса", desc: "Описание", link: "" },
+      { industry: ["Зависимый Еком"], name: "Валютный счет", desc: "Описание", link: "" },
+      { industry: ["Зависимый Еком"], name: "Бухгалтерия", desc: "Описание", link: "" },
+      { industry: ["Зависимый Еком"], name: "Овернайт", desc: "Описание", link: "" },
+      { industry: ["Розница"], name: "Регистрация бизнеса", desc: "Регистрация бизнеса онлайн — 0 ₽", link: "https://www.tbank.ru/business/registration/" },
+      { industry: ["Розница"], name: "Расчетный счет", desc: "Бесплатное обслуживание до 2 месяцев", link: "https://www.tbank.ru/business/account/" },
+      { industry: ["Розница"], name: "Торговый эквайринг", desc: "Описание", link: "" },
+      { industry: ["Розница"], name: "Оплата по QR (СБП)", desc: "Описание", link: "" },
+      { industry: ["Розница"], name: "Зарплатный проект", desc: "Описание", link: "" },
+      { industry: ["Розница"], name: "Кредиты для бизнеса", desc: "Описание", link: "" },
+      { industry: ["Розница"], name: "Бухгалтерия", desc: "Описание", link: "" },
+      { industry: ["Розница"], name: "Продвижение бизнеса (Выгода)", desc: "Описание", link: "" },
+      { industry: ["Розница"], name: "POS кредитование", desc: "Описание", link: "" },
+      { industry: ["Розница"], name: "Овернайт", desc: "Описание", link: "" },
+      { industry: ["Розница"], name: "Pay 2 Phone", desc: "Описание", link: "" },
+      { industry: ["IT"], name: "Регистрация бизнеса", desc: "Регистрация бизнеса онлайн — 0 ₽", link: "https://www.tbank.ru/business/registration/" },
+      { industry: ["IT"], name: "Расчетный счет", desc: "Бесплатное обслуживание до 2 месяцев", link: "https://www.tbank.ru/business/account/" },
+      { industry: ["IT"], name: "Зарплатный проект", desc: "Описание", link: "" },
+      { industry: ["IT"], name: "Кредиты для бизнеса", desc: "Описание", link: "" },
+      { industry: ["IT"], name: "Бухгалтерия", desc: "Описание", link: "" },
+      { industry: ["IT"], name: "Овернайт", desc: "Описание", link: "" },
+      { industry: ["Стройка"], name: "Регистрация бизнеса", desc: "Регистрация бизнеса онлайн — 0 ₽", link: "https://www.tbank.ru/business/registration/" },
+      { industry: ["Стройка"], name: "Расчетный счет", desc: "Бесплатное обслуживание до 2 месяцев", link: "https://www.tbank.ru/business/account/" },
+      { industry: ["Стройка"], name: "Зарплатный проект", desc: "Описание", link: "" },
+      { industry: ["Стройка"], name: "Кредиты для бизнеса", desc: "Описание", link: "" },
+      { industry: ["Стройка"], name: "Бухгалтерия", desc: "Описание", link: "" },
+      { industry: ["Стройка"], name: "Овернайт", desc: "Описание", link: "" },
+      { industry: ["Стройка"], name: "Интернет-эквайринг", desc: "Описание", link: "" }
+    ];
 
-      FALLBACK_PRODUCTS: [
-        // Независимый Еком
-        { industry: ["Независимый Еком"], name: "Регистрация бизнеса", desc: "Регистрация бизнеса онлайн — 0 ₽. Без похода в ФНС и МФЦ.", link: "https://www.tbank.ru/business/registration/" },
-        { industry: ["Независимый Еком"], name: "Расчетный счет", desc: "Бесплатное обслуживание до 2 месяцев. До 500 000 ₽ бонусами на сервисы для бизнеса.", link: "https://www.tbank.ru/business/account/" },
-        { industry: ["Независимый Еком"], name: "Интернет-эквайринг", desc: "Приём оплаты на сайте", link: "" },
-        { industry: ["Независимый Еком"], name: "Зарплатный проект", desc: "Выплата зарплаты сотрудникам", link: "" },
-        // Зависимый Еком
-        { industry: ["Зависимый Еком"], name: "Регистрация бизнеса", desc: "Регистрация бизнеса онлайн — 0 ₽. Без похода в ФНС и МФЦ.", link: "https://www.tbank.ru/business/registration/" },
-        { industry: ["Зависимый Еком"], name: "Расчетный счет", desc: "Бесплатное обслуживание до 2 месяцев. До 500 000 ₽ бонусами на сервисы для бизнеса.", link: "https://www.tbank.ru/business/account/" },
-        { industry: ["Зависимый Еком"], name: "Селлер", desc: "Решение для продавцов на маркетплейсах", link: "https://www.tbank.ru/business/seller/" },
-        // Розница
-        { industry: ["Розница"], name: "Регистрация бизнеса", desc: "Регистрация бизнеса онлайн — 0 ₽. Без похода в ФНС и МФЦ.", link: "https://www.tbank.ru/business/registration/" },
-        { industry: ["Розница"], name: "Расчетный счет", desc: "Бесплатное обслуживание до 2 месяцев. До 500 000 ₽ бонусами на сервисы для бизнеса.", link: "https://www.tbank.ru/business/account/" },
-        { industry: ["Розница"], name: "Торговый эквайринг", desc: "Приём карт в офлайн-точках", link: "https://www.tbank.ru/business/acquiring/" },
-        { industry: ["Розница"], name: "Зарплатный проект", desc: "Выплата зарплаты сотрудникам", link: "" },
-        // IT
-        { industry: ["IT"], name: "Регистрация бизнеса", desc: "Регистрация бизнеса онлайн — 0 ₽. Без похода в ФНС и МФЦ.", link: "https://www.tbank.ru/business/registration/" },
-        { industry: ["IT"], name: "Расчетный счет", desc: "Бесплатное обслуживание до 2 месяцев. До 500 000 ₽ бонусами на сервисы для бизнеса.", link: "https://www.tbank.ru/business/account/" },
-        { industry: ["IT"], name: "Зарплатный проект", desc: "Выплата зарплаты сотрудникам", link: "" },
-        // Стройка
-        { industry: ["Стройка"], name: "Регистрация бизнеса", desc: "Регистрация бизнеса онлайн — 0 ₽. Без похода в ФНС и МФЦ.", link: "https://www.tbank.ru/business/registration/" },
-        { industry: ["Стройка"], name: "Расчетный счет", desc: "Бесплатное обслуживание до 2 месяцев. До 500 000 ₽ бонусами на сервисы для бизнеса.", link: "https://www.tbank.ru/business/account/" },
-        { industry: ["Стройка"], name: "Зарплатный проект", desc: "Выплата зарплаты сотрудникам", link: "" },
-        { industry: ["Стройка"], name: "Интернет-эквайринг", desc: "Приём оплаты на сайте", link: "" }
-      ]
+    const CONFIG = {
+      INDUSTRY_DESCS: {
+        "Независимый Еком": "Онлайн-продажи через собственный сайт или приложение. Клиент не зависит от маркетплейсов.",
+        "Зависимый Еком": "Продажи через маркетплейсы (Ozon, Wildberries, Яндекс.Маркет) как основной канал.",
+        "Розница": "Офлайн-точки продаж: магазины, салоны, кафе, сервисные центры.",
+        "IT": "Разработка ПО, веб-студии, аутсорсинг, IT-консалтинг.",
+        "Стройка": "Строительство, ремонт, производство стройматериалов."
+      }
     };
 
-    let allBundles = [], allProducts = [], selectedIndustry = "", selectedProducts = [], selectedBundleIds = [];
-
-    function splitIndustries(val) {
-      if (!val) return [];
-      return val.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
-    }
-
-    async function init() {
-      const cacheBust = `&t=${Date.now()}`;
-      try {
-        const [bundles, products] = await Promise.all([
-          CONFIG.USE_GOOGLE_SHEET ? fetchTSV(CONFIG.BUNDLES_SHEET + cacheBust, parseBundleRow) : Promise.resolve(CONFIG.FALLBACK_BUNDLES),
-          CONFIG.USE_GOOGLE_SHEET ? fetchTSV(CONFIG.PRODUCTS_SHEET + cacheBust, parseProductRow) : Promise.resolve(CONFIG.FALLBACK_PRODUCTS)
-        ]);
-        allBundles = bundles.length > 0 ? bundles : CONFIG.FALLBACK_BUNDLES;
-        allProducts = products.length > 0 ? products : CONFIG.FALLBACK_PRODUCTS;
-        console.log("Загружено бандлов:", allBundles.length);
-        console.log("Загружено продуктов:", allProducts.length);
-        renderIndustries();
-        setupEventListeners();
-      } catch (e) {
-        console.error("Ошибка загрузки:", e);
-        allBundles = CONFIG.FALLBACK_BUNDLES;
-        allProducts = CONFIG.FALLBACK_PRODUCTS;
-        renderIndustries();
-        setupEventListeners();
-      }
-    }
-
-    async function fetchTSV(url, parseFn) {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const text = await res.text();
-      const rows = text.trim().split('\n').map(r => r.split('\t'));
-      if (rows.length < 2) return [];
-      return rows.slice(1).map(row => parseFn(row));
-    }
-
-    function parseBundleRow(row) {
-      // Столбцы таблицы бандлов:
-      // [0] Отрасль | [1] Продукт банка | [2] Оффер вендора | [3] Описание | [4] Описание оффера | [5] Ссылка
-      return {
-        id: `b_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
-        industry: splitIndustries(row[0]),
-        product: row[1]?.trim(),
-        vendor: row[2]?.trim(),
-        script: row[3]?.trim(),
-        details: row[4]?.trim(),
-        link: row[5]?.trim()
-      };
-    }
-
-    function parseProductRow(row) {
-      // Столбцы таблицы продуктов:
-      // [0] Отрасль | [1] Продукт банка | [2] Описание | [3] Ссылка
-      return {
-        industry: splitIndustries(row[0]),
-        name: row[1]?.trim(),
-        desc: row[2]?.trim(),
-        link: row[3]?.trim()
-      };
-    }
+    let selectedIndustry = "", selectedProducts = [], selectedBundleIds = [];
+    let allBundles = BUNDLES_DATA;
+    let allProducts = PRODUCTS_DATA;
 
     function getUniqueIndustries() {
       const inds = new Set();
       allBundles.forEach(d => d.industry.forEach(i => inds.add(i)));
       allProducts.forEach(d => d.industry.forEach(i => inds.add(i)));
-      // Фиксированный порядок отраслей
-      const ORDER = ["Независимый Еком", "Зависимый Еком", "Розница", "IT", "Стройка"];
-      const result = ORDER.filter(i => inds.has(i));
-      inds.forEach(i => { if (!ORDER.includes(i)) result.push(i); });
-      return result;
+      return Array.from(inds).sort();
     }
 
     function getProductsForIndustry(industry) {
-      return allProducts
-        .filter(p => p.industry.includes(industry))
-        .map(p => p.name);
+      return allProducts.filter(p => p.industry.includes(industry)).map(p => p.name);
     }
 
     function getBundles(industry, products) {
@@ -402,35 +358,73 @@
       });
     }
 
+    // 🎯 НОВАЯ ЛОГИКА ГЕНЕРАЦИИ ТЕКСТА
     function generateCombinedText(bundleIds) {
       if (bundleIds.length === 0) return '';
       const bundles = bundleIds.map(id => allBundles.find(b => b.id === id)).filter(Boolean);
       if (bundles.length === 0) return '';
       if (bundles.length === 1) return bundles[0].script;
       
+      // Группируем по продукту
       const byProduct = {};
       bundles.forEach(b => {
         if (!byProduct[b.product]) byProduct[b.product] = [];
         byProduct[b.product].push(b);
       });
       
+      const productEntries = Object.entries(byProduct);
+      
+      // Если выбран ОДИН продукт с несколькими офферами
+      if (productEntries.length === 1) {
+        const [product, list] = productEntries[0];
+        const base = list[0].script.split(' и получи ')[0];
+        const benefits = list.map(b => {
+          const parts = b.script.split(' и получи ');
+          return parts.length > 1 ? parts[1].replace(/[""]/g, '') : '';
+        }).filter(Boolean);
+        
+        if (benefits.length === 2) {
+          return `${base} и получи "${benefits[0]}" и "${benefits[1]}"`;
+        } else if (benefits.length > 2) {
+          const last = benefits.pop();
+          return `${base} и получи "${benefits.join('", "')}" и "${last}"`;
+        } else {
+          return list[0].script;
+        }
+      }
+      
+      // Если выбраны РАЗНЫЕ продукты
       const parts = [];
-      Object.entries(byProduct).forEach(([product, list]) => {
+      productEntries.forEach(([product, list]) => {
         if (list.length === 1) {
-          parts.push(list[0].script);
+          const script = list[0].script;
+          const action = script.includes('Открой') ? 'Открой' : 'Подключи';
+          const benefit = script.split(' и получи ')[1] || '';
+          parts.push({ product, action, benefit });
         } else {
           const base = list[0].script.split(' и получи ')[0];
           const benefits = list.map(b => {
             const p = b.script.split(' и получи ');
-            return p.length > 1 ? p[1] : '';
+            return p.length > 1 ? p[1].replace(/[""]/g, '') : '';
           }).filter(Boolean);
-          parts.push(benefits.length > 0 ? `${base} и получи ${benefits.join(' и ')}` : list[0].script);
+          const benefitText = benefits.length > 1 
+            ? `"${benefits.join('", "')}"` 
+            : `"${benefits[0]}"`;
+          parts.push({ product, action: base.includes('Открой') ? 'Открой' : 'Подключи', benefit: benefitText });
         }
       });
       
-      if (parts.length === 1) return parts[0];
-      if (parts.length === 2) return parts.join(' и ');
-      return parts.slice(0, -1).join(', ') + ' и ' + parts[parts.length - 1];
+      if (parts.length === 2) {
+        return `${parts[0].action} ${parts[0].product} и подключи ${parts[1].product} и получи ${parts[0].benefit} и ${parts[1].benefit}`.replace(/  +/g, ' ');
+      } else if (parts.length > 2) {
+        const first = parts[0];
+        const middle = parts.slice(1, -1).map(p => `${p.product}`).join(', ');
+        const last = parts[parts.length - 1];
+        const benefits = parts.map(p => p.benefit).join(' и ');
+        return `${first.action} ${first.product}, подключи ${middle} и ${last.product} и получи ${benefits}`.replace(/, подключи и /g, ', ').replace(/  +/g, ' ');
+      }
+      
+      return bundles[0].script;
     }
 
     function renderIndustries() {
@@ -456,10 +450,10 @@
         return;
       }
       products.forEach(prodName => {
-        const pInfo = allProducts.find(p => p.name === prodName && p.industry.includes(selectedIndustry));
+        const pInfo = allProducts.find(p => p.name === prodName);
         const div = document.createElement('div');
         div.className = 'checkbox-item';
-        const nameHtml = pInfo?.link && !['Ссылка1','Ссылка2','Ссылка3','Ссылка4','Ссылка5','Ссылка6','Ссылка7','Ссылка8','Ссылка9'].includes(pInfo.link)
+        const nameHtml = pInfo?.link 
           ? `<a href="${pInfo.link}" target="_blank" class="product-link" onclick="event.stopPropagation()">${prodName} ↗</a>`
           : `<span class="product-name">${prodName}</span>`;
         div.innerHTML = `<input type="checkbox" value="${prodName}" ${selectedProducts.includes(prodName) ? 'checked' : ''}> ${nameHtml}`;
@@ -506,27 +500,9 @@
         script.className = 'bundle-script';
         script.textContent = b.script;
         
+        // Только ссылка на оффер (убрали кнопки Добавить/Подробнее)
         const actions = document.createElement('div');
         actions.className = 'card-actions';
-        
-        const btnAdd = document.createElement('button');
-        btnAdd.className = `btn btn-primary`;
-        btnAdd.textContent = isSelected ? '✓ Выбрано' : '+ Добавить';
-        btnAdd.addEventListener('click', (e) => {
-          e.stopPropagation();
-          toggleBundle(b.id);
-        });
-        
-        const btnDetails = document.createElement('button');
-        btnDetails.className = 'btn btn-secondary';
-        btnDetails.textContent = 'Подробнее';
-        btnDetails.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openModal(b);
-        });
-        
-        actions.appendChild(btnAdd);
-        actions.appendChild(btnDetails);
         if (b.link) {
           const linkBtn = document.createElement('a');
           linkBtn.href = b.link;
@@ -539,10 +515,11 @@
         
         card.appendChild(header);
         card.appendChild(script);
-        card.appendChild(actions);
+        if (actions.children.length > 0) card.appendChild(actions);
         
+        // Клик по карточке переключает выбор
         card.addEventListener('click', (e) => {
-          if (!e.target.closest('button') && !e.target.closest('a')) {
+          if (!e.target.closest('a')) {
             toggleBundle(b.id);
           }
         });
@@ -643,15 +620,15 @@
       });
       
       document.getElementById('feedback-btn').addEventListener('click', () => {
-        if (CONFIG.FEEDBACK_URL && !CONFIG.FEEDBACK_URL.includes('YOUR_FORM_ID')) {
-          window.open(CONFIG.FEEDBACK_URL, '_blank');
-        } else {
-          alert('Форма обратной связи ещё не настроена.');
-        }
+        alert('Форма обратной связи. Напишите нам!');
       });
     }
 
-    init();
+    document.addEventListener('DOMContentLoaded', () => {
+      renderIndustries();
+      setupEventListeners();
+      console.log("✓ Данные загружены:", allBundles.length, "бандлов,", allProducts.length, "продуктов");
+    });
   </script>
 </body>
 </html>
